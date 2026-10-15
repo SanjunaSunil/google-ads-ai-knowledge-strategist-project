@@ -1,0 +1,102 @@
+{
+  "schema_version": "1.0.0",
+  "description": "LLM-as-a-Judge evaluation rubric for the Google Ads AI Support Assistant. A secondary model uses this rubric to score live assistant responses and flag quality drift.",
+  "policy_scope": "ADS-EDT-001",
+  "evaluation_model": "Secondary auditor model (separate from primary assistant)",
+  "scoring_frequency": "Every live conversation",
+  "alert_threshold_overall": 3.0,
+  "dimensions": [
+    {
+      "id": "DIM-01",
+      "name": "Grounding",
+      "description": "Does the response cite a specific knowledge chunk and policy ID? Is the cited rule accurate and directly relevant to the advertiser's situation?",
+      "type": "scored",
+      "scale": "0-5",
+      "scoring_criteria": {
+        "5": "Policy ID cited, chunk ID cited, rule directly matches the advertiser's situation, no unsupported claims.",
+        "4": "Policy ID cited, rule is correct, minor mismatch between chunk and situation.",
+        "3": "Policy ID cited but no chunk ID, or rule is partially relevant.",
+        "2": "No policy ID cited, but response contains accurate policy information.",
+        "1": "Policy information present but inaccurate or misapplied.",
+        "0": "No policy grounding. Response is speculative or fabricated."
+      },
+      "failure_threshold": 2,
+      "alert_action": "Flag for immediate human review. Log as grounding_failure."
+    },
+    {
+      "id": "DIM-02",
+      "name": "Relevance",
+      "description": "Does the response directly address what the advertiser asked? Does it avoid introducing unrelated policy topics?",
+      "type": "scored",
+      "scale": "0-5",
+      "scoring_criteria": {
+        "5": "Response is entirely focused on the advertiser's specific question. No off-topic content.",
+        "4": "Response is on-topic with one minor digression.",
+        "3": "Response answers the question but includes unnecessary information that may confuse.",
+        "2": "Response partially addresses the question but misses the core issue.",
+        "1": "Response addresses a different question than the one asked.",
+        "0": "Response is entirely unrelated to the advertiser's query."
+      },
+      "failure_threshold": 2,
+      "alert_action": "Flag for intent routing review. Log as relevance_failure."
+    },
+    {
+      "id": "DIM-03",
+      "name": "Format Compliance",
+      "description": "Does the response follow the required output format: What happened / Why it matters / How to fix it / Next step?",
+      "type": "pass_fail",
+      "pass_criteria": "All four sections present. Each section is populated with substantive content, not placeholder text.",
+      "fail_criteria": "One or more sections missing, or sections present but empty.",
+      "alert_action": "Flag for system prompt review. Log as format_failure."
+    },
+    {
+      "id": "DIM-04",
+      "name": "Escalation Trigger Accuracy",
+      "description": "When an escalation trigger condition is present, did the assistant correctly route to human escalation? When no trigger is present, did the assistant correctly handle self-serve?",
+      "type": "pass_fail",
+      "pass_criteria": "Escalation fired correctly when trigger condition met. Self-serve used correctly when no trigger present.",
+      "fail_criteria": "Escalation missed when trigger condition was present (under-escalation). OR escalation fired when no trigger was present (over-escalation).",
+      "alert_action": "Flag as critical. Log as escalation_failure. Route to knowledge engineer for system prompt review within 24 hours."
+    },
+    {
+      "id": "DIM-05",
+      "name": "Tone Appropriateness",
+      "description": "Does the response use the tone prescribed for the matched intent (empathetic, direct, professional)?",
+      "type": "scored",
+      "scale": "0-5",
+      "scoring_criteria": {
+        "5": "Tone matches prescribed intent tone exactly. No mismatch.",
+        "4": "Tone is appropriate but not precisely matched to prescription.",
+        "3": "Tone is neutral — neither correct nor incorrect.",
+        "2": "Tone mismatches intent (e.g., clinical response to a frustrated advertiser).",
+        "1": "Tone is inappropriate (dismissive, overly casual for a compliance response).",
+        "0": "Tone is harmful or offensive."
+      },
+      "failure_threshold": 2,
+      "alert_action": "Flag for few-shot dataset review. Log as tone_failure."
+    }
+  ],
+  "overall_score": {
+    "calculation": "Average of all scored dimensions (DIM-01, DIM-02, DIM-05). Pass/fail dimensions (DIM-03, DIM-04) are evaluated independently.",
+    "alert_threshold": 3.0,
+    "critical_override": "If DIM-04 (Escalation Trigger Accuracy) fails, the conversation is flagged as critical regardless of overall score.",
+    "alert_action_on_threshold_breach": "Notify knowledge engineer via alerting pipeline. Log conversation ID and dimension scores. Do not auto-correct — human review required."
+  },
+  "logging": {
+    "fields_logged_per_evaluation": [
+      "conversation_id",
+      "timestamp",
+      "intent_matched",
+      "chunk_retrieved",
+      "dim_01_score",
+      "dim_02_score",
+      "dim_03_result",
+      "dim_04_result",
+      "dim_05_score",
+      "overall_score",
+      "flags_triggered",
+      "escalation_fired"
+    ],
+    "retention_days": 90
+  }
+}

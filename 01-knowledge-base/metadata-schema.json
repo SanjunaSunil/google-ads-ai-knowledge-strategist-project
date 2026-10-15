@@ -1,0 +1,153 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Google Ads AI Knowledge Base — Chunk Metadata Schema",
+  "description": "Defines the required and optional metadata fields for every knowledge base chunk used in RAG retrieval.",
+  "version": "1.0.0",
+  "type": "object",
+  "required": [
+    "id",
+    "policy_id",
+    "title",
+    "content",
+    "content_type",
+    "product_area",
+    "policy_category",
+    "enforcement_action",
+    "intent_match",
+    "trigger_condition",
+    "routing",
+    "audience",
+    "complexity",
+    "last_updated",
+    "tokens_approx"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for this chunk. Format: <policy_id>-<sequence>. Example: ADS-EDT-001-C1",
+      "pattern": "^[A-Z]+-[A-Z]+-[0-9]+-C[0-9]+$"
+    },
+    "policy_id": {
+      "type": "string",
+      "description": "Stable identifier for the parent policy. Used for traceability and patch targeting.",
+      "pattern": "^ADS-[A-Z]+-[0-9]+$",
+      "examples": ["ADS-EDT-001", "ADS-PRH-002", "ADS-RST-003"]
+    },
+    "title": {
+      "type": "string",
+      "description": "Short, descriptive label for this chunk. Used in retrieval result previews.",
+      "maxLength": 80
+    },
+    "content": {
+      "type": "string",
+      "description": "The pruned, token-optimized policy text for this chunk. No conversational filler. Dense and precise."
+    },
+    "content_type": {
+      "type": "string",
+      "description": "The type of content this chunk represents.",
+      "enum": ["policy", "how-to", "troubleshooting", "release-note", "faq"]
+    },
+    "product_area": {
+      "type": "array",
+      "description": "Which Google Ads product areas this chunk applies to.",
+      "items": {
+        "type": "string",
+        "enum": ["search", "display", "shopping", "performance-max", "video", "app", "all"]
+      },
+      "minItems": 1
+    },
+    "policy_category": {
+      "type": "string",
+      "description": "The top-level policy category this chunk belongs to.",
+      "enum": ["prohibited", "restricted", "editorial", "technical", "destination"]
+    },
+    "enforcement_action": {
+      "type": "string",
+      "description": "The enforcement outcome when this rule is violated.",
+      "enum": ["disapproval", "account_suspension", "warning", "certification_required", "none"]
+    },
+    "intent_match": {
+      "type": "array",
+      "description": "User intent IDs that should trigger retrieval of this chunk.",
+      "items": {
+        "type": "string",
+        "enum": [
+          "ad_disapproval",
+          "policy_clarification",
+          "billing_dispute",
+          "campaign_setup",
+          "account_access",
+          "performance_issue",
+          "asset_generation",
+          "language_targeting"
+        ]
+      },
+      "minItems": 1
+    },
+    "trigger_condition": {
+      "type": "string",
+      "description": "The specific advertiser situation that makes this chunk relevant.",
+      "enum": [
+        "ad_text_violation",
+        "destination_url_mismatch",
+        "broken_landing_page",
+        "back_button_disabled",
+        "html5_ad_malfunction",
+        "language_targeting_mismatch",
+        "character_limit_exceeded",
+        "file_size_exceeded",
+        "vague_ad_copy",
+        "gimmicky_symbols"
+      ]
+    },
+    "routing": {
+      "type": "string",
+      "description": "The recommended action after this chunk is retrieved and used.",
+      "enum": ["self_serve", "human_escalation", "policy_flag", "certification_required"]
+    },
+    "audience": {
+      "type": "string",
+      "description": "The primary audience for this chunk.",
+      "enum": ["advertiser", "agency", "internal_support", "developer"]
+    },
+    "complexity": {
+      "type": "string",
+      "description": "How technically complex this chunk is for the target audience.",
+      "enum": ["basic", "intermediate", "advanced"]
+    },
+    "last_updated": {
+      "type": "string",
+      "description": "ISO 8601 date when this chunk was last reviewed or updated. Critical for staleness detection.",
+      "format": "date"
+    },
+    "version": {
+      "type": "integer",
+      "description": "Incremented each time the chunk content is meaningfully changed.",
+      "minimum": 1,
+      "default": 1
+    },
+    "tokens_approx": {
+      "type": "integer",
+      "description": "Approximate token count of the content field. Used for RAG budget management.",
+      "minimum": 1
+    },
+    "confidence_tier": {
+      "type": "string",
+      "description": "How reliably this chunk answers its tagged intents. Set by the knowledge engineer after review.",
+      "enum": ["high", "medium", "low"]
+    },
+    "related_chunks": {
+      "type": "array",
+      "description": "IDs of other chunks that are semantically related. Used to build retrieval chains.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "source_url": {
+      "type": "string",
+      "description": "The canonical URL of the source policy page.",
+      "format": "uri"
+    }
+  },
+  "additionalProperties": false
+}

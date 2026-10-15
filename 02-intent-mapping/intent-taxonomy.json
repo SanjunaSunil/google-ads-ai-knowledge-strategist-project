@@ -1,0 +1,137 @@
+{
+  "schema_version": "1.0.0",
+  "description": "Intent taxonomy for the Google Ads AI support assistant. Covers ad disapproval scenarios derived from the Editorial and Technical Requirements policy (ADS-EDT-001).",
+  "total_intents": 8,
+  "intents": [
+    {
+      "id": "INT-001",
+      "label": "Ad Disapproved — Gimmicky Symbols",
+      "description": "Advertiser's ad was disapproved because the ad text uses non-standard punctuation, symbols, or stylized spelling.",
+      "example_phrases": [
+        "My ad says F-R-E-E and got rejected",
+        "Why can't I use exclamation marks in my ad?",
+        "My ad with special characters was disapproved",
+        "I used currency symbols in my headline and my ad got taken down"
+      ],
+      "knowledge_chunk": "ADS-EDT-001-C3",
+      "routing": "self_serve",
+      "confidence_threshold": 0.80,
+      "tone": "empathetic",
+      "escalation_trigger": false
+    },
+    {
+      "id": "INT-002",
+      "label": "Ad Disapproved — Vague Ad Copy",
+      "description": "Advertiser's ad was disapproved because the ad text is too generic and does not describe the actual product or service.",
+      "example_phrases": [
+        "I wrote buy great products here and it got rejected",
+        "My headline says Shop now for deals and was disapproved",
+        "Why is my ad too generic?",
+        "My ad keeps getting rejected for being vague"
+      ],
+      "knowledge_chunk": "ADS-EDT-001-C2",
+      "routing": "self_serve",
+      "confidence_threshold": 0.80,
+      "tone": "empathetic",
+      "escalation_trigger": false
+    },
+    {
+      "id": "INT-003",
+      "label": "Ad Disapproved — Broken or Unavailable Landing Page",
+      "description": "Ad was approved previously but is now disapproved because the destination URL is returning an error, the site is down, or the page is under construction.",
+      "example_phrases": [
+        "My ad was approved last week but now it's disapproved and I haven't changed anything",
+        "My landing page is fine but my ad is rejected",
+        "Why did my ad get disapproved overnight?",
+        "My ad status changed to disapproved without any changes from my side"
+      ],
+      "knowledge_chunk": "ADS-EDT-001-C4",
+      "routing": "self_serve",
+      "confidence_threshold": 0.75,
+      "tone": "empathetic",
+      "escalation_trigger": true,
+      "escalation_condition": "Advertiser confirms site is live and URL is correct"
+    },
+    {
+      "id": "INT-004",
+      "label": "Ad Disapproved — Disabled Back Button on Landing Page",
+      "description": "Ad disapproved because the landing page has JavaScript or other code that prevents users from navigating back using the browser back button.",
+      "example_phrases": [
+        "My competitor's ads are running fine but mine keep getting rejected",
+        "I can't figure out why my landing page is causing disapprovals",
+        "My ads are rejected but the page looks normal to me",
+        "What is wrong with my landing page?"
+      ],
+      "knowledge_chunk": "ADS-EDT-001-C4",
+      "routing": "self_serve",
+      "confidence_threshold": 0.70,
+      "tone": "direct",
+      "escalation_trigger": false
+    },
+    {
+      "id": "INT-005",
+      "label": "Ad Disapproved — Language Targeting Mismatch",
+      "description": "Ad or landing page content is in a different language than the targeting settings, violating technical requirements.",
+      "example_phrases": [
+        "We're targeting Spanish speakers but our ads are in English, is that allowed?",
+        "My ads are in French but I'm targeting English speakers",
+        "Does the ad language have to match the targeting language?",
+        "We run multilingual campaigns, what are the language rules?"
+      ],
+      "knowledge_chunk": "ADS-EDT-001-C5",
+      "routing": "self_serve",
+      "confidence_threshold": 0.85,
+      "tone": "professional",
+      "escalation_trigger": false
+    },
+    {
+      "id": "INT-006",
+      "label": "Ad Disapproved — HTML5 Ad Malfunction",
+      "description": "HTML5 display ad renders incorrectly or appears blank in certain environments, typically mobile browsers.",
+      "example_phrases": [
+        "My HTML5 banner shows fine on desktop but appears blank on mobile",
+        "My animated ad is not displaying properly",
+        "My HTML5 ad is blank on some devices",
+        "Display ad works on Chrome but not on Safari"
+      ],
+      "knowledge_chunk": "ADS-EDT-001-C5",
+      "routing": "human_escalation",
+      "confidence_threshold": 0.80,
+      "tone": "professional",
+      "escalation_trigger": true,
+      "escalation_condition": "Always — technical debugging required beyond policy clarification"
+    },
+    {
+      "id": "INT-007",
+      "label": "Ad Disapproved — Character or File Limit Exceeded",
+      "description": "Ad disapproved because the headline, body, image, or video asset exceeds the format-specific character count, file size, or length limits.",
+      "example_phrases": [
+        "My headline is too long according to Google",
+        "My image ad was rejected for file size",
+        "What is the character limit for ad headlines?",
+        "My video ad was disapproved for length"
+      ],
+      "knowledge_chunk": "ADS-EDT-001-C6",
+      "routing": "self_serve",
+      "confidence_threshold": 0.85,
+      "tone": "direct",
+      "escalation_trigger": false
+    },
+    {
+      "id": "INT-008",
+      "label": "General Policy Clarification — Editorial or Technical",
+      "description": "Advertiser is asking a general question about editorial or technical policy without a specific disapproval event.",
+      "example_phrases": [
+        "What are the rules for ad text formatting?",
+        "What technical requirements do my ads need to meet?",
+        "Can you explain Google Ads editorial standards?",
+        "What makes an ad compliant with Google policies?"
+      ],
+      "knowledge_chunk": "ADS-EDT-001-C1",
+      "routing": "self_serve",
+      "confidence_threshold": 0.75,
+      "tone": "professional",
+      "escalation_trigger": false
+    }
+  ]
+}
