@@ -11,7 +11,7 @@ app = Flask(__name__)
 CORS(app, origins=["http://localhost:5173", "https://ads-evaluator.web.app", "https://ads-evaluator.firebaseapp.com"])
 
 genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
-model = genai.GenerativeModel("gemini-1.5-flash")
+model = genai.GenerativeModel("gemini-2.0-flash")
 
 INTENTS = {
     "INT-001": {"label": "Ad Disapproved — Gimmicky Symbols", "chunk": "ADS-EDT-001-C3", "routing": "self_serve", "tone": "empathetic"},
