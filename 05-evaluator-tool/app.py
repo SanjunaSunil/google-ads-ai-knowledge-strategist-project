@@ -114,15 +114,18 @@ def evaluate():
 
     prompt = build_prompt(user_msg, assistant_msg, intent_id)
 
-    response = model.generate_content(prompt)
-    raw = response.text.strip()
-    if raw.startswith("```"):
-        raw = raw.split("```")[1]
-        if raw.startswith("json"):
-            raw = raw[4:]
-        raw = raw.strip()
-    result = json.loads(raw)
-    return jsonify(result)
+    try:
+        response = model.generate_content(prompt)
+        raw = response.text.strip()
+        if raw.startswith("```"):
+            raw = raw.split("```")[1]
+            if raw.startswith("json"):
+                raw = raw[4:]
+            raw = raw.strip()
+        result = json.loads(raw)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 @app.route("/health", methods=["GET"])
