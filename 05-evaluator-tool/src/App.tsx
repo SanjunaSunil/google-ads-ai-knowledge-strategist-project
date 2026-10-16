@@ -11,7 +11,8 @@ export default function App() {
   const [selected, setSelected] = useState<EvaluationRecord | null>(null)
 
   useEffect(() => {
-    fetch('/health')
+    const backendUrl = import.meta.env.VITE_BACKEND_URL ?? 'https://google-ads-evaluator-backend-1027112404919.europe-west1.run.app'
+    fetch(`${backendUrl}/health`)
       .then(r => setBackendOk(r.ok))
       .catch(() => setBackendOk(false))
 

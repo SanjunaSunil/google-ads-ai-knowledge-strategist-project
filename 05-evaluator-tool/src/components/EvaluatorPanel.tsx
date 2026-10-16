@@ -28,7 +28,8 @@ export function EvaluatorPanel({ onNewRecord }: Props) {
     setResult(null)
 
     try {
-      const res = await fetch('/evaluate', {
+      const backendUrl = import.meta.env.VITE_BACKEND_URL ?? 'https://google-ads-evaluator-backend-1027112404919.europe-west1.run.app'
+      const res = await fetch(`${backendUrl}/evaluate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
